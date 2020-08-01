@@ -1,0 +1,27 @@
+﻿@model ScratchpadSummaryViewModel
+
+<div>
+    @if(Model.Scratchpads.Count() == 0)
+    {
+        <p>
+            No Scratchpad created yet, so <a asp-controller="Scratchpad" asp-action="New">create one!</a>
+        </p>
+        
+    } else
+    {
+        <ul class="list-unstyled components">
+            @foreach(var itm in Model.Scratchpads)
+            {
+            <li>
+                <a class="list-group-item list-group-item-action m-1 flex-column align-items-start @(itm == Model.ActiveScratchpad ? "active" : "")"
+                   asp-controller="Scratchpad" asp-action="View" asp-route-id="@itm.ScratchpadId">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">@itm.Title</h5>
+                        <small>@itm.LastAccess</small>
+                    </div>
+                </a>
+            </li>
+            }
+        </ul>
+    }
+</div>

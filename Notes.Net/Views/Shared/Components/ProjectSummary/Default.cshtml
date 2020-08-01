@@ -1,0 +1,44 @@
+﻿@model ProjectSummaryViewModel
+@using Notes.Net.Common
+
+<div class="tp-1">
+    @if(Model.Projects.Count() == 0)
+    {
+        <p>
+            No Project created yet, so <a asp-controller="Project" asp-action="New">create one!</a>
+        </p>
+        
+    } else
+    {
+        <div class="list-group list-group-root well">
+            @foreach(var itm in Model.Projects)
+            {
+            <a href="#item-@itm.ProjectId" class="list-group-item list-group-item-action" data-toggle="collapse">
+                <i class="fas fa-angle-right"></i> <span class="h6">@TextHelper.TrimLength(@itm.Title)</span>
+            </a>
+            <div class="list-group collapse @(itm == Model.ActiveProject ? "show" : "")" id="item-@itm.ProjectId">
+                @foreach(var sp in itm.Scratchpads) { 
+                <a asp-controller="scratchpad" asp-action="View" asp-route-project="@itm.Title" asp-route-scratchpad="@sp.Title"
+                   class="list-group-item list-group-item-action flex-column align-items-start @(sp == Model.ActiveScratchpad ? "active" : "")">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h6 class="mb-1">@TextHelper.TrimLength(sp.Title)</h6>
+                        <small>@(DateHelper.PrettyTimeSpan(DateTime.Now - sp.LastAccess))</small>
+                    </div>
+                    @if (sp.Notes.Count() == 0)
+                    {
+                        <small class="mb-1">
+                            No Notes createt yet
+                        </small>
+                    } else
+                    {
+                        <small class="mb-1">
+                            @TextHelper.TrimLength(sp.Notes.OrderByDescending(n => n.ModifiedBy).First().Title)
+                        </small>
+                    }
+                </a>
+                }
+            </div>
+            }
+        </div>
+    }
+</div>

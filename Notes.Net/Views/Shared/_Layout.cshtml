@@ -1,0 +1,76 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Notes.Net</title>
+    <environment include="Development">
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+        <link rel="stylesheet" href="/css/standard.css?@DateTime.Now.Ticks" />        
+    </environment>
+    <environment exclude="Development">
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="/css/standard.css" />
+    </environment>
+
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js" integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ" crossorigin="anonymous"></script>
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js" integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY" crossorigin="anonymous"></script>
+</head>
+<body>
+
+    <div class="wrapper">
+        <nav id="sidebar">
+            <button type="button" id="dismiss" class="btn btn-secondary btn-sm">
+                <i class="fa fa-times"></i>
+            </button>
+            <div class="sidebar-header">
+                <h3>Notes.NET</h3>
+            </div>
+            <div class="sidebar-content">
+                <div class="btn-group w-100">
+                    <button asp-action="Create" asp-controller="Note" type="button" class="btn btn-light">
+                        Create a new Note
+                    </button>
+                    <button type="button" class="btn btn-light dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span class="sr-only">Toggle Dropdown</span>
+                    </button>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" asp-controller="Note" asp-action="Create">New Note</a>
+                        <a class="dropdown-item" asp-controller="Scratchpad" asp-action="Create">New Scratchpad</a>
+                        <a class="dropdown-item" asp-controller="Project" asp-action="Create">New Project</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" asp-controller="Settings" asp-action="View">Settings</a>
+                    </div>
+                </div>
+
+                @await Component.InvokeAsync("ProjectSummary")
+            </div>
+        </nav>
+
+        <div id="content">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <div class="container-fluid">
+                    <button type="button" id="sidebarCollapse" class="btn btn-secondary">
+                        <i class="fas fa-align-left"></i>
+                        <span>Toggle Sidebar</span>
+                    </button>
+                </div>
+            </nav>
+
+            @RenderBody()
+        </div>
+    </div>
+    <div class="overlay"></div>
+
+    <environment include="Development">
+        <script src="~/lib/jquery/dist/jquery.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.js"></script>
+        <script type="text/javascript" src="~/js/ui.js?@DateTime.Now.Ticks"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="~/lib/jquery/dist/jquery.min.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+        <script type="text/javascript" src="~/js/ui.js"></script>
+    </environment>
+</body>
+</html>
