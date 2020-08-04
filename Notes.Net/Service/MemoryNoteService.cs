@@ -41,10 +41,24 @@ namespace Notes.Net.Service
                             Height = 400,
                             Width = 500,
                             PosX = 50,
-                            PosY = 60,
+                            PosY = 120,
                             Modified = new DateTime(2020, 2, 20, 16, 50, 12),
                             ModifiedBy = serviceContext.CurrentUser,
                             NoteId = 1
+                        },
+                        new Note()
+                        {
+                            Title = "Einsendeaufgaben",
+                            Content = "<p>Das ist eine <b>Beispielnotiz</b></p>",
+                            Created = new DateTime(2020, 08, 04, 18, 20, 13),
+                            CreatedBy = serviceContext.CurrentUser,
+                            Height = 300,
+                            Width = 300,
+                            PosX = 450,
+                            PosY = 520,
+                            Modified = new DateTime(2020, 8, 04, 18, 50, 50),
+                            ModifiedBy = serviceContext.CurrentUser,
+                            NoteId = 2
                         }
                     }
                 },

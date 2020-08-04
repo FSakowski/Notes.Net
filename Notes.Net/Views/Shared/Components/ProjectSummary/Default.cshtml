@@ -32,7 +32,7 @@
                     } else
                     {
                         <small class="mb-1">
-                            @TextHelper.TrimLength(sp.Notes.OrderByDescending(n => n.ModifiedBy).First().Title)
+                            @TextHelper.TrimLength(sp.Notes.OrderByDescending(n => n.Modified).First().Title)
                         </small>
                     }
                 </a>
