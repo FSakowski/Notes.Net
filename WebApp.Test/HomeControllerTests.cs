@@ -3,7 +3,6 @@ using Notes.Net.Controllers;
 using Notes.Net.Models;
 using Notes.Net.Models.ViewModels;
 using Notes.Net.Service;
-using System;
 using System.Linq;
 using Xunit;
 
