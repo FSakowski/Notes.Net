@@ -4,7 +4,6 @@
 
 @section heads {
     <environment include="Development">
-        <link rel="stylesheet" href="/lib/quilljs/dist/quill.snow.css" />
         <link rel="stylesheet" href="~/lib/jquery-ui/jquery-ui.css" />
         <link rel="stylesheet" href="~/lib/richtext/src/richtext.min.css" />
         <script type="text/javascript" src="~/lib/jquery-ui/jquery-ui.js"></script>
@@ -12,7 +11,6 @@
         <script type="text/javascript" src="~/js/editor.js?@DateTime.Now.Ticks"></script>
     </environment>
     <environment exclude="Development">
-        <link rel="stylesheet" href="/lib/quilljs/dist/quill.snow.min.css" />
         <link rel="stylesheet" href="~/lib/jquery-ui/jquery-ui.min.css" />
         <link rel="stylesheet" href="~/lib/richtext/src/richtext.min.css" />
         <script type="text/javascript" src="~/lib/jquery-ui/jquery-ui.min.js"></script>
@@ -23,31 +21,20 @@
 
 @foreach (var note in Model.Notes)
 {
-    <div id="note-@note.NoteId" class="card" style="position:absolute; left:@($"{note.PosX}px"); top:@($"{note.PosY}px"); width: @($"{note.Width}px"); height: @($"{note.Height}px")">
+    <note data="@note" class="card">
         <div class="card-header">@note.Title</div>
         <div class="card-body">
             @note.Content
         </div>
         <div class="card-footer">
-            <button onclick="openRTFEditor(this)" class="btn btn-sm" data-mode="open" data-note="@note.NoteId">
+            <button onclick="openRTFEditor(this)" class="btn btn-sm" data-mode="open">
                 <i class="fas fa-keyboard"></i>
                 <span>Edit this Note</span>
             </button>
-            <button onclick="closeRTFEditor(this)" class="btn btn-sm" style="display: none" data-mode="save" data-note="@note.NoteId">
+            <button onclick="closeRTFEditor(this)" class="btn btn-sm" style="display: none" data-mode="save">
                 <i class="fas fa-cloud-upload-alt"></i>
                 <span>Save your changes</span>
             </button>
         </div>
-    </div>
+    </note>
 }
-
-<script type="text/javascript">
-    $(document).ready(function () {
-        $(".card").draggable({
-            handle: ".card-header",
-            cursor: "crosshair"
-        });
-
-        $(".card").resizable();
-    });
-</script>

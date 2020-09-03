@@ -23,3 +23,16 @@ $(function () {
     });
 
 });
+
+function showToast(message) {
+    var panel = $("#toast-panel");
+
+    if (!panel)
+        return;
+
+    var template = $($('#toast-template').html());
+    template.appendTo(panel);
+    template.find(".toast-body").text(message);
+    template.toast({ delay: 2000 });
+    template.toast('show');
+}

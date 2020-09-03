@@ -13,7 +13,7 @@ namespace Notes.Net.Service
 
         public void SaveScratchpad(Scratchpad sp);
 
-        public void SaveNote(Note note);
+        public void SaveNote(Note note, bool updateMetaData = true);
 
         public void SaveProject(Project proj);
 

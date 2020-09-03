@@ -90,6 +90,7 @@ namespace Notes.Net.Service
 
             projects.Add(proj);
             scratchpads.AddRange(proj.Scratchpads);
+            scratchpads.ForEach(s => notes.AddRange(s.Notes));
 
             proj = new Project()
             {
@@ -128,13 +129,16 @@ namespace Notes.Net.Service
             scratchpads.Remove(sp);
         }
 
-        public void SaveNote(Note note)
+        public void SaveNote(Note note, bool updateMetaData = true)
         {
             if (note.NoteId == 0)
             {
                 note.NoteId = serviceContext.GetNextFreeNumber<Note>();
                 notes.Add(note);
-                SaveNoteMetaData(note, true);
+
+                if (updateMetaData)
+                    SaveNoteMetaData(note, true);
+
                 note.Scratchpad.Notes.Add(note);
             } else
             {

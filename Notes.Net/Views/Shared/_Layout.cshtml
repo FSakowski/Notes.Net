@@ -9,14 +9,14 @@
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
         <link rel="stylesheet" href="/css/standard.css?@DateTime.Now.Ticks" />
         <script src="~/lib/jquery/dist/jquery.js"></script>
-        <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
         <script type="text/javascript" src="~/js/ui.js?@DateTime.Now.Ticks"></script>
     </environment>
     <environment exclude="Development">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
         <link rel="stylesheet" href="/css/standard.css" />
         <script src="~/lib/jquery/dist/jquery.min.js"></script>
-        <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
         <script type="text/javascript" src="~/js/ui.js"></script>
     </environment>
 
@@ -26,7 +26,6 @@
     @RenderSection("heads", required: false)
 </head>
 <body>
-
     <div class="wrapper">
         <nav id="sidebar">
             <button type="button" id="dismiss" class="btn btn-secondary btn-sm">
@@ -53,7 +52,7 @@
                 </div>
 
                 @await Component.InvokeAsync("ProjectSummary")
-            </div>
+            </div>https://localhost:44304/
         </nav>
 
         <div id="content">
@@ -68,7 +67,25 @@
 
             @RenderBody()
         </div>
+
+        <div id="toast-panel" aria-live="polite" aria-atomic="true">
+            <template id="toast-template">
+                <div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="toast-header">
+                        <strong class="mr-auto">Notes.Net</strong>
+                        <button type="button" class="ml-1 mb-1 close" data-dismiss="toast" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="toast-body">
+                    </div>
+                </div>
+            </template>
+        </div>
     </div>
+
     <div class="overlay"></div>
+
+
 </body>
 </html>
