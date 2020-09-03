@@ -39,5 +39,28 @@ namespace Notes.Net.Controllers
 
             return Ok();
         }
+
+        [HttpPost("[controller]/{noteId:int}/savesize/{w:int}x{h:int}")]
+        public IActionResult SaveSize(
+            [FromRoute] int noteId,
+            [FromRoute] int w,
+            [FromRoute] int h)
+        {
+            if (noteId <= 0)
+                ModelState.AddModelError("noteId", "note id may not be empty");
+
+            var note = noteService.Notes.FirstOrDefault(n => n.NoteId == noteId);
+            if (note == null)
+                ModelState.AddModelError("noteId", "note not found");
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            note.Width = w;
+            note.Height = h;
+            noteService.SaveNote(note, false);
+
+            return Ok();
+        }
     }
 }

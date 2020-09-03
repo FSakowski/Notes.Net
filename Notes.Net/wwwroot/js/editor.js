@@ -29,7 +29,7 @@ function closeRTFEditor(sender) {
     }
 }
 
-function saveNote(note) {
+function saveNotePos(note) {
     var body = note.find(".card-body");
 
     var id = note.data('note');
@@ -42,9 +42,26 @@ function saveNote(note) {
         method: "POST",
         url: url
     }).fail(function () {
-        showToast("Save Position of note " + id + " failed!");
+        showToast("Saving position of note " + id + " failed!");
     }).done(function () {
-        showToast("Save Position of note " + id + " successfully");
+    })
+}
+
+function saveNoteSize(note) {
+    var body = note.find(".card-body");
+
+    var id = note.data('note');
+    var width = note.width();
+    var height = note.height();
+
+    var url = "/note/" + id + "/savesize/" + width + "x" + height;
+
+    $.ajax({
+        method: "POST",
+        url: url
+    }).fail(function () {
+        showToast("Saving size of note " + id + " failed!");
+    }).done(function () {
     })
 }
 
@@ -55,9 +72,14 @@ $(document).ready(function () {
         grid: [5, 5],
         distance: 20,
         stop: function (event, ui) {
-            saveNote($(ui.helper));
+            saveNotePos($(ui.helper));
         }
     });
 
-    $(".card").resizable();
+    $(".card").resizable({
+        grid: [5, 5],
+        stop: function (event, ui) {
+            saveNoteSize($(ui.helper));
+        }
+    });
 });
