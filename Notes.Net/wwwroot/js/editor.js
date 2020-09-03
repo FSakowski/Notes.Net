@@ -2,6 +2,11 @@
     if (sender) {
         var note = $(sender).closest("div[data-note]");
         if (note) {
+            note.data("width", note.width());
+            note.data("height", note.height());
+            note.css("width", "");
+            note.css("height", "");
+
             var body = note.find(".card-body");
             var content = body.html();
             body.empty();
@@ -17,6 +22,11 @@ function closeRTFEditor(sender) {
     if (sender) {
         var note = $(sender).closest("div[data-note]");
         if (note) {
+            note.width(note.data("width"));
+            note.height(note.data("height"));
+            note.removeData("width");
+            note.removeData("height");
+
             var body = note.find(".card-body");
             var editor = body.find("textarea");
 
@@ -30,8 +40,6 @@ function closeRTFEditor(sender) {
 }
 
 function saveNotePos(note) {
-    var body = note.find(".card-body");
-
     var id = note.data('note');
     var posx = note.position().left;
     var posy = note.position().top;
@@ -48,8 +56,6 @@ function saveNotePos(note) {
 }
 
 function saveNoteSize(note) {
-    var body = note.find(".card-body");
-
     var id = note.data('note');
     var width = note.width();
     var height = note.height();
