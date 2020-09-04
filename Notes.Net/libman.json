@@ -3,7 +3,12 @@
   "defaultProvider": "jsdelivr",
   "libraries": [
     {
-      "library": "bootstrap@4.5.0",
+      "provider": "unpkg",
+      "library": "popper.js@1.16.1",
+      "destination": "wwwroot/lib/popper/"
+    },
+    {
+      "library": "bootstrap@4.5.2",
       "destination": "wwwroot/lib/bootstrap/"
     },
     {

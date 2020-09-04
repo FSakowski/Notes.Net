@@ -2,10 +2,14 @@
     if (sender) {
         var note = $(sender).closest("div[data-note]");
         if (note) {
+            // remove static values for width and height to adjust the div to the size if the editor
             note.data("width", note.width());
             note.data("height", note.height());
             note.css("width", "");
             note.css("height", "");
+
+            // set to front
+            note.css("z-index", 9999);
 
             var body = note.find(".card-body");
             var content = body.html();
@@ -22,13 +26,18 @@ function closeRTFEditor(sender) {
     if (sender) {
         var note = $(sender).closest("div[data-note]");
         if (note) {
+            // restore orginal width and height
             note.width(note.data("width"));
             note.height(note.data("height"));
             note.removeData("width");
             note.removeData("height");
 
+            note.css("z-index", '');
+
             var body = note.find(".card-body");
             var editor = body.find("textarea");
+
+            saveNoteContent(note, editor.val());
 
             body.empty();
             body.append(editor.val());
@@ -37,6 +46,24 @@ function closeRTFEditor(sender) {
             $(sender).hide();
         }
     }
+}
+
+function saveNoteContent(note, content) {
+    var id = note.data('note');
+
+    var url = "/note/" + id + "/save";
+
+    $.ajax({
+        method: "POST",
+        processData: false,
+        contentType: 'text/plain',
+        data: content,
+        url: url
+    }).fail(function () {
+        showToast("Saving the note " + id + " failed!");
+    }).done(function () {
+        showToast("Note " + id + " has been successfully saved");
+    })
 }
 
 function saveNotePos(note) {

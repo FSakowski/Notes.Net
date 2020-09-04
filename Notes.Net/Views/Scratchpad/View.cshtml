@@ -23,9 +23,7 @@
 {
     <note data="@note" class="card">
         <div class="card-header">@note.Title</div>
-        <div class="card-body">
-            @note.Content
-        </div>
+        <div class="card-body">@Html.Raw(note.Content)</div>
         <div class="card-footer">
             <button onclick="openRTFEditor(this)" class="btn btn-sm" data-mode="open">
                 <i class="fas fa-keyboard"></i>
