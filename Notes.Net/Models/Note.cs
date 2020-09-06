@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Notes.Net.Models
@@ -34,7 +35,6 @@ namespace Notes.Net.Models
         public int Height { get; set; }
 
         public int ScratchpadId { get; set; }
-        public Scratchpad Scratchpad { get; set; }
 
         public Note()
         {

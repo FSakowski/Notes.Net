@@ -1,6 +1,9 @@
 ﻿using Ganss.XSS;
 using Microsoft.AspNetCore.Mvc;
+using Notes.Net.Models;
+using Notes.Net.Models.ViewModels;
 using Notes.Net.Service;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -15,6 +18,36 @@ namespace Notes.Net.Controllers
         public NoteController(INoteService service)
         {
             noteService = service;
+        }
+
+        [HttpGet]
+        public IActionResult Create()
+        {
+            return View(new CreateNoteViewModel());
+        }
+
+        [HttpPost]
+        public IActionResult Create([Required] CreateNoteViewModel post)
+        {
+            if (ModelState.IsValid)
+            {
+                var note = new Note()
+                {
+                    ScratchpadId = post.Scratchpad.Value,
+                    Title = post.Title,
+                    Content = post.Content
+                };
+
+                noteService.SaveNote(note);
+
+                var scratch = noteService.Scratchpads.First(s => s.ScratchpadId == note.ScratchpadId);
+                var project = noteService.Projects.First(p => p.ProjectId == scratch.ProjectId);
+
+                return RedirectToAction("View", "Scratchpad",
+                    new { project = project.Title, scratchpad = scratch.Title });
+            }
+            else
+                return View(post);
         }
 
         [HttpPost("[controller]/{noteId:int}/save")]

@@ -20,7 +20,8 @@ namespace Notes.Net
         {
             services.AddSingleton<Tenant>(new Tenant() { TenantId = 1, Name = "Default" });
             services.AddTransient<IServiceContext, DefaultServiceContext>();
-            services.AddSingleton<INoteService, MemoryNoteService>();
+            services.AddSingleton<INoteService, NoteService>();
+            services.AddSingleton<IRepository, FakeRepository>();
 
             services.AddMvc();
             services.AddMemoryCache();

@@ -2,8 +2,6 @@
 using Microsoft.AspNetCore.Razor.TagHelpers;
 using Notes.Net.Models;
 using Notes.Net.Service;
-using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 
 namespace Notes.Net.Infrastructure.TagHelpers
@@ -37,7 +35,7 @@ namespace Notes.Net.Infrastructure.TagHelpers
             }
 
             output.Attributes.SetAttribute("Name", ModelFor.Name);
-            output.Attributes.SetAttribute("Id", ModelFor.Name);
+            /*output.Attributes.SetAttribute("Id", ModelFor.Name);*/
         }
 
     }

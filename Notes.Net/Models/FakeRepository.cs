@@ -1,11 +1,11 @@
-﻿using Notes.Net.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
-namespace Notes.Net.Service
+namespace Notes.Net.Models
 {
-    public class MemoryNoteService : INoteService
+    public class FakeRepository : IRepository
     {
         private readonly List<Project> projects = new List<Project>();
 
@@ -13,12 +13,21 @@ namespace Notes.Net.Service
 
         private readonly List<Note> notes = new List<Note>();
 
-        private readonly IServiceContext serviceContext;
-
-        public MemoryNoteService(IServiceContext context)
+        private readonly User CurrentUser = new User()
         {
-            serviceContext = context;
+            Admin = true,
+            Name = "Florian",
+            UserId = 1
+        };
 
+        public IQueryable<Project> Projects => projects.AsQueryable();
+
+        public IQueryable<Scratchpad> Scratchpads => scratchpads.AsQueryable();
+
+        public IQueryable<Note> Notes => notes.AsQueryable();
+
+        public FakeRepository()
+        {
             var proj = new Project()
             {
                 ProjectId = 1,
@@ -37,28 +46,30 @@ namespace Notes.Net.Service
                             Title = "Bevorstehende Termine",
                             Content = "Test",
                             Created = new DateTime(2020, 02, 20, 14, 30, 23),
-                            CreatedBy = serviceContext.CurrentUser,
+                            CreatedBy = CurrentUser,
                             Height = 400,
                             Width = 500,
                             PosX = 50,
                             PosY = 120,
                             Modified = new DateTime(2020, 2, 20, 16, 50, 12),
-                            ModifiedBy = serviceContext.CurrentUser,
-                            NoteId = 1
+                            ModifiedBy = CurrentUser,
+                            NoteId = 1,
+                            ScratchpadId = 1
                         },
                         new Note()
                         {
                             Title = "Einsendeaufgaben",
                             Content = "<p>Das ist eine <b>Beispielnotiz</b></p>",
                             Created = new DateTime(2020, 08, 04, 18, 20, 13),
-                            CreatedBy = serviceContext.CurrentUser,
+                            CreatedBy = CurrentUser,
                             Height = 300,
                             Width = 300,
                             PosX = 450,
                             PosY = 520,
                             Modified = new DateTime(2020, 8, 04, 18, 50, 50),
-                            ModifiedBy = serviceContext.CurrentUser,
-                            NoteId = 2
+                            ModifiedBy = CurrentUser,
+                            NoteId = 2,
+                            ScratchpadId = 1
                         }
                     }
                 },
@@ -112,50 +123,43 @@ namespace Notes.Net.Service
             scratchpads.AddRange(proj.Scratchpads);
         }
 
-        public IQueryable<Project> Projects => projects.AsQueryable();
-
-        public IQueryable<Scratchpad> Scratchpads => scratchpads.AsQueryable();
-
-        public IQueryable<Note> Notes => notes.AsQueryable();
-
-        public void DeleteNote(Note note)
+        public void DeleteNote(int noteId)
         {
+            var note = notes.FirstOrDefault(n => n.NoteId == noteId);
+            if (note == null)
+                throw new ArgumentException("note not found", nameof(noteId));
+
             scratchpads.Where(sp => sp.Notes.Contains(note)).ToList().ForEach(sp => sp.Notes.Remove(note));
             notes.Remove(note);
         }
 
-        public void DeleteScratchpad(Scratchpad sp)
+        public void DeleteScratchpad(int scratchpadId)
         {
-            scratchpads.Remove(sp);
+            var scratchpad = scratchpads.FirstOrDefault(s => s.ScratchpadId == scratchpadId);
+            if (scratchpad == null)
+                throw new ArgumentException("scratchpad not found", nameof(scratchpadId));
+
+            projects.Where(p => p.Scratchpads.Contains(scratchpad)).ToList().ForEach(p => p.Scratchpads.Remove(scratchpad));
+
+            scratchpads.Remove(scratchpad);
         }
 
-        public void SaveNote(Note note, bool updateMetaData = true)
+        public void DeleteProject(int projectId)
         {
+            var project = projects.FirstOrDefault(p => p.ProjectId == projectId);
+            if (project == null)
+                throw new ArgumentException("project not found", nameof(projectId));
+
+            projects.Remove(project);
+        }
+
+        public void SaveNote(Note note)
+        {
+
             if (note.NoteId == 0)
             {
-                note.NoteId = serviceContext.GetNextFreeNumber<Note>();
+                note.NoteId = notes.Count == 0 ? 1 : notes.Last().NoteId + 1;
                 notes.Add(note);
-
-                if (updateMetaData)
-                    SaveNoteMetaData(note, true);
-
-                note.Scratchpad.Notes.Add(note);
-            } else
-            {
-                SaveNoteMetaData(note, false);
-            }
-        }
-
-        private void SaveNoteMetaData(Note note, bool newEntry)
-        {
-            if (newEntry)
-            {
-                note.Created   = DateTime.Now;
-                note.CreatedBy = serviceContext.CurrentUser;
-            } else
-            {
-                note.Modified   = DateTime.Now;
-                note.ModifiedBy = serviceContext.CurrentUser;
             }
         }
 
@@ -163,10 +167,9 @@ namespace Notes.Net.Service
         {
             if (sp.ScratchpadId == 0)
             {
-                sp.ScratchpadId = serviceContext.GetNextFreeNumber<Scratchpad>();
+                sp.ScratchpadId = scratchpads.Count == 0 ? 1 : scratchpads.Last().ScratchpadId + 1;
                 sp.Notes = new List<Note>();
                 scratchpads.Add(sp);
-                sp.Project.Scratchpads.Add(sp);
             }
         }
 
@@ -174,8 +177,12 @@ namespace Notes.Net.Service
         {
             if (proj.ProjectId == 0)
             {
-                proj.ProjectId = serviceContext.GetNextFreeNumber<Project>();
-                proj.Owner = serviceContext.CurrentTenant;
+                proj.ProjectId = projects.Count == 0 ? 1 : projects.Last().ProjectId + 1;
+                proj.Owner = new Tenant()
+                {
+                    TenantId = 1,
+                    Name = "Test"
+                };
 
                 if (proj.Scratchpads == null)
                 {
@@ -185,9 +192,8 @@ namespace Notes.Net.Service
                     {
                         Title = "General",
                         LastAccess = DateTime.Now,
-                        Owner = serviceContext.CurrentUser,
-                        Notes = new List<Note>(),
-                        Project = proj
+                        Owner = CurrentUser,
+                        Notes = new List<Note>()
                     };
                     SaveScratchpad(sp);
                 }

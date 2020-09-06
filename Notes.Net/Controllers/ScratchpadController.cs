@@ -2,6 +2,7 @@
 using Notes.Net.Models;
 using Notes.Net.Models.ViewModels;
 using Notes.Net.Service;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
@@ -54,21 +55,24 @@ namespace Notes.Net.Controllers
         {
             if (ModelState.IsValid)
             {
-                Project proj = noteService.Projects.FirstOrDefault(p => p.ProjectId == post.Project);
-                if (proj == null)
-                {
-                    ModelState.AddModelError(nameof(post.Project), $"Project {post.Project} not found");
-                    return View(post);
-                }
-
-                Scratchpad scratch = new Scratchpad() { Title = post.Title, Project = proj };
+                Scratchpad scratch = new Scratchpad() { Title = post.Title, ProjectId = post.Project.Value };
 
                 noteService.SaveScratchpad(scratch);
+
+                var proj = noteService.Projects.First(p => p.ProjectId == scratch.ProjectId);
+
                 return RedirectToAction("View", "Scratchpad",
-                    new { project = scratch.Project.Title, scratchpad = scratch.Title });
+                    new { project = proj.Title, scratchpad = scratch.Title });
             }
             else
                 return View(post);
+        }
+
+        [Route("/scratchpad/list")]
+        [HttpGet]
+        public IEnumerable<Scratchpad> Get([Required] int projectId)
+        {
+            return noteService.Scratchpads.Where(s => s.ProjectId == projectId).ToList();
         }
     }
 }

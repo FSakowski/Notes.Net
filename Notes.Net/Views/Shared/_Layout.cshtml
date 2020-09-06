@@ -38,9 +38,9 @@
             </div>
             <div class="sidebar-content">
                 <div class="btn-group w-100">
-                    <button asp-action="Create" asp-controller="Note" type="button" class="btn btn-light">
+                    <a asp-action="Create" asp-controller="Note" class="btn btn-light">
                         Create a new Note
-                    </button>
+                    </a>
                     <button type="button" class="btn btn-light dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <span class="sr-only">Toggle Dropdown</span>
                     </button>
@@ -54,7 +54,7 @@
                 </div>
 
                 @await Component.InvokeAsync("ProjectSummary")
-            </div>https://localhost:44304/
+            </div>
         </nav>
 
         <div id="content">
@@ -87,7 +87,6 @@
     </div>
 
     <div class="overlay"></div>
-
 
 </body>
 </html>

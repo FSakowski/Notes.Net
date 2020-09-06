@@ -20,5 +20,7 @@ namespace Notes.Net.Service
         public void DeleteScratchpad(Scratchpad sp);
 
         public void DeleteNote(Note note);
+
+        public void DeleteProject(Project proj);
     }
 }
