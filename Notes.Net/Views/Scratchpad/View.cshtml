@@ -1,6 +1,11 @@
 ﻿@model Scratchpad
 
-<h1>@Model.Title</h1>
+<p class="h1 mousehover">
+    @Model.Title
+    <a asp-controller="scratchpad" asp-action="edit" asp-route-id="@Model.ScratchpadId" class="btn btn-light hide">
+        <i class="fas fa-pencil-alt"></i>
+    </a>
+</p>
 
 @section heads {
     <environment include="Development">
@@ -23,7 +28,7 @@
 {
     <note data="@note" class="card">
         <div class="card-header">@note.Title</div>
-        <div class="card-body">@Html.Raw(note.Content)</div>
+        <div class="card-body overflow-hidden">@Html.Raw(note.Content)</div>
         <div class="card-footer">
             <button onclick="openRTFEditor(this)" class="btn btn-sm" data-mode="open">
                 <i class="fas fa-keyboard"></i>

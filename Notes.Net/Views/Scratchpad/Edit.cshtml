@@ -1,8 +1,10 @@
 ﻿@model Scratchpad
 
-<h1>Create a new Scratchpad</h1>
+<h1>@Model.Title</h1>
 
-<form asp-action="Create" method="post">
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="ScratchpadId" />
+
     <div class="form-group">
         <label asp-for="ProjectId"></label>
         <div><span asp-validation-for="ProjectId" class="text-danger"></span></div>

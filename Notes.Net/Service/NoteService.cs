@@ -82,6 +82,8 @@ namespace Notes.Net.Service
             if (!Projects.Any(p => p.ProjectId == sp.ProjectId))
                 throw new ArgumentException($"The project ({sp.ProjectId}) associated with the scratchpad was not found", nameof(sp));
 
+            sp.LastAccess = DateTime.Now;
+
             repository.SaveScratchpad(sp);
         }
 

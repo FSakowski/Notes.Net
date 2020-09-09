@@ -48,27 +48,53 @@ namespace Notes.Net.Controllers
             return View(sp);
         }
 
+        [HttpGet]
         public ViewResult Create()
         {
-            return View(new CreateScratchpadViewModel());
+            return View(new Scratchpad());
         }
 
         [HttpPost]
-        public IActionResult Create([Required] CreateScratchpadViewModel post)
+        public IActionResult Create(Scratchpad post)
         {
-            if (ModelState.IsValid)
-            {
-                Scratchpad scratch = new Scratchpad() { Title = post.Title, ProjectId = post.Project.Value };
+            if (post.ProjectId <= 0)
+                ModelState.AddModelError(nameof(Scratchpad.ProjectId), "No Project selected");
 
-                noteService.SaveScratchpad(scratch);
+            if (!ModelState.IsValid)
+            return View(post);
 
-                var proj = noteService.Projects.First(p => p.ProjectId == scratch.ProjectId);
+            Scratchpad scratch = new Scratchpad() { Title = post.Title, ProjectId = post.ProjectId };
 
-                return RedirectToAction("View", "Scratchpad",
-                    new { project = proj.Title, scratchpad = scratch.Title });
-            }
-            else
-                return View(post);
+            noteService.SaveScratchpad(scratch);
+
+            var proj = noteService.Projects.First(p => p.ProjectId == scratch.ProjectId);
+
+            return RedirectToAction("View", "Scratchpad",
+                new { project = proj.Title, scratchpad = scratch.Title });
+        }
+
+        [HttpGet]
+        public IActionResult Edit(int id)
+        {
+            var scratch = noteService.Scratchpads.FirstOrDefault(s => s.ScratchpadId == id);
+            if (scratch == null)
+                return NotFound(id);
+
+            return View(scratch);
+        }
+
+        [HttpPost]
+        public IActionResult Edit(Scratchpad scratchpad)
+        {
+            if (!ModelState.IsValid)
+                return View(scratchpad);
+
+            noteService.SaveScratchpad(scratchpad);
+
+            var proj = noteService.Projects.First(p => p.ProjectId == scratchpad.ProjectId);
+
+            return RedirectToAction("View", "Scratchpad",
+                new { project = proj.Title, scratchpad = scratchpad.Title });
         }
 
         [Route("/scratchpad/list")]

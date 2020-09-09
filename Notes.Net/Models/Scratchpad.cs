@@ -14,6 +14,7 @@ namespace Notes.Net.Models
         [MaxLength(40)]
         public string Title { get; set; }
 
+        [Required]
         public int ProjectId { get; set; }
 
         [JsonIgnore]

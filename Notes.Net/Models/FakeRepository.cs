@@ -167,6 +167,20 @@ namespace Notes.Net.Models
 
                 var scratch = Scratchpads.First(s => s.ScratchpadId == note.ScratchpadId);
                 scratch.Notes.Add(note);
+            } else
+            {
+                var db = Notes.First(n => n.NoteId == note.NoteId);
+                db.Title = note.Title;
+                db.Content = note.Content;
+                db.Created = note.Created;
+                db.CreatedBy = note.CreatedBy;
+                db.Height = note.Height;
+                db.Width = note.Width;
+                db.Modified = note.Modified;
+                db.ModifiedBy = note.ModifiedBy;
+                db.PosX = note.PosX;
+                db.PosY = note.PosY;
+                db.ScratchpadId = note.ScratchpadId;
             }
         }
 
@@ -180,6 +194,12 @@ namespace Notes.Net.Models
 
                 var proj = Projects.First(p => p.ProjectId == sp.ProjectId);
                 proj.Scratchpads.Add(sp);
+            } else
+            {
+                var db = Scratchpads.First(s => s.ScratchpadId == sp.ScratchpadId);
+                db.LastAccess = sp.LastAccess;
+                db.ProjectId = sp.ProjectId;
+                db.Title = sp.Title;
             }
         }
 
@@ -208,6 +228,10 @@ namespace Notes.Net.Models
                     SaveScratchpad(sp);
                 }
                 projects.Add(proj);
+            } else
+            {
+                var db = Projects.First(p => p.ProjectId == proj.ProjectId);
+                db.Title = proj.Title;
             }
         }
     }
