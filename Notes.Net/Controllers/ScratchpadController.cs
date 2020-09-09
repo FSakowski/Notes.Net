@@ -42,6 +42,9 @@ namespace Notes.Net.Controllers
             if (sp == null)
                 return NotFound();
 
+            ViewBag.Project    = proj.ProjectId;
+            ViewBag.Scratchpad = sp.ScratchpadId;
+
             return View(sp);
         }
 

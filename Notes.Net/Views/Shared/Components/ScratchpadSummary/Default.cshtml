@@ -13,7 +13,7 @@
             @foreach(var itm in Model.Scratchpads)
             {
             <li>
-                <a class="list-group-item list-group-item-action m-1 flex-column align-items-start @(itm == Model.ActiveScratchpad ? "active" : "")"
+                <a class="list-group-item list-group-item-action m-1 flex-column align-items-start @(itm.ScratchpadId == ViewBag.Scratchpad ? "active" : "")"
                    asp-controller="Scratchpad" asp-action="View" asp-route-id="@itm.ScratchpadId">
                     <div class="d-flex w-100 justify-content-between">
                         <h5 class="mb-1">@itm.Title</h5>

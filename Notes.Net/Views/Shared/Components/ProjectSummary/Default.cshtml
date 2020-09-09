@@ -16,10 +16,10 @@
             <a href="#item-@itm.ProjectId" class="list-group-item list-group-item-action" data-toggle="collapse">
                 <i class="fas fa-angle-right"></i> <span class="h6">@TextHelper.TrimLength(@itm.Title)</span>
             </a>
-            <div class="list-group collapse @(itm == Model.ActiveProject ? "show" : "")" id="item-@itm.ProjectId">
+            <div class="list-group collapse @(itm.ProjectId == ViewBag.Project ? "show" : "")" id="item-@itm.ProjectId">
                 @foreach(var sp in itm.Scratchpads) { 
                 <a asp-controller="scratchpad" asp-action="View" asp-route-project="@itm.Title" asp-route-scratchpad="@sp.Title"
-                   class="list-group-item list-group-item-action flex-column align-items-start @(sp == Model.ActiveScratchpad ? "active" : "")">
+                   class="list-group-item list-group-item-action flex-column align-items-start @(sp.ScratchpadId == ViewBag.Scratchpad ? "active" : "")">
                     <div class="d-flex w-100 justify-content-between">
                         <h6 class="mb-1">@TextHelper.TrimLength(sp.Title)</h6>
                         <small>@(DateHelper.PrettyTimeSpan(DateTime.Now - sp.LastAccess))</small>

@@ -39,6 +39,7 @@ namespace Notes.Net.Models
                     ScratchpadId = 1,
                     Title = "Fernuni Allgemein",
                     LastAccess = new DateTime(2020, 03, 13, 12, 40, 20),
+                    ProjectId = 1,
                     Notes = new List<Note>()
                     {
                         new Note()
@@ -79,6 +80,7 @@ namespace Notes.Net.Models
                     ScratchpadId = 2,
                     Title = "Modul BWL II",
                     LastAccess = new DateTime(2020, 03, 10, 12, 40, 20),
+                    ProjectId = 1,
                     Notes = new List<Note>()
                 },
 
@@ -87,6 +89,7 @@ namespace Notes.Net.Models
                     ScratchpadId = 3,
                     Title = "Modul Alg. Mathematik",
                     LastAccess = new DateTime(2019, 06, 14, 12, 40, 20),
+                    ProjectId = 1,
                     Notes = new List<Note>()
                 },
 
@@ -95,6 +98,7 @@ namespace Notes.Net.Models
                     ScratchpadId = 4,
                     Title = "Modul VWL Makroökonomie",
                     LastAccess = new DateTime(2019, 09, 20, 12, 40, 20),
+                    ProjectId = 1,
                     Notes = new List<Note>()
                 }
             };
@@ -115,7 +119,8 @@ namespace Notes.Net.Models
                     ScratchpadId = 5,
                     Title = "Allgemeines",
                     LastAccess = new DateTime(2020, 07, 27, 20, 52, 50),
-                    Notes = new List<Note>()
+                    Notes = new List<Note>(),
+                    ProjectId = 2,
                 }
             };
 
@@ -155,11 +160,13 @@ namespace Notes.Net.Models
 
         public void SaveNote(Note note)
         {
-
             if (note.NoteId == 0)
             {
                 note.NoteId = notes.Count == 0 ? 1 : notes.Last().NoteId + 1;
                 notes.Add(note);
+
+                var scratch = Scratchpads.First(s => s.ScratchpadId == note.ScratchpadId);
+                scratch.Notes.Add(note);
             }
         }
 
@@ -170,6 +177,9 @@ namespace Notes.Net.Models
                 sp.ScratchpadId = scratchpads.Count == 0 ? 1 : scratchpads.Last().ScratchpadId + 1;
                 sp.Notes = new List<Note>();
                 scratchpads.Add(sp);
+
+                var proj = Projects.First(p => p.ProjectId == sp.ProjectId);
+                proj.Scratchpads.Add(sp);
             }
         }
 

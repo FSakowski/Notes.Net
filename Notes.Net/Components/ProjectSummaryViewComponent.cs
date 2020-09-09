@@ -19,23 +19,9 @@ namespace Notes.Net.Components
 
         public IViewComponentResult Invoke()
         {
-            Project activeProj = null;
-            if (RouteData.Values.ContainsKey("project"))
-            {
-                activeProj = noteService.Projects.FirstOrDefault(p => p.Title == (string)RouteData.Values["project"]);
-            }
-
-            Scratchpad activeSP = null;
-            if (RouteData.Values.ContainsKey("scratchpad"))
-            {
-                activeSP = noteService.Scratchpads.FirstOrDefault(s => s.Title == (string)RouteData.Values["scratchpad"]);
-            }
-
             return View(new ProjectSummaryViewModel
             {
-                Projects = noteService.Projects,
-                ActiveProject = activeProj,
-                ActiveScratchpad = activeSP
+                Projects = noteService.Projects
             });
         }
     }

@@ -29,7 +29,7 @@ namespace Notes.Net.Infrastructure.TagHelpers
             {
                 foreach (Scratchpad scratch in noteService.Scratchpads.Where(sp => sp.ProjectId == Project))
                 {
-                    if (ModelFor.Model is Scratchpad selected && selected.ScratchpadId == scratch.ScratchpadId)
+                    if (ModelFor.Model is int selected && selected == scratch.ScratchpadId)
                     {
                         output.Content.AppendHtml($"<option selected value=\"{scratch.ScratchpadId}\">{scratch.Title}</option>");
                     }

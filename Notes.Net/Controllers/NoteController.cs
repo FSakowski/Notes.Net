@@ -1,5 +1,7 @@
 ﻿using Ganss.XSS;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Notes.Net.Infrastructure;
 using Notes.Net.Models;
 using Notes.Net.Models.ViewModels;
 using Notes.Net.Service;
@@ -21,9 +23,24 @@ namespace Notes.Net.Controllers
         }
 
         [HttpGet]
-        public IActionResult Create()
+        public IActionResult Create([FromQuery] int scratchpad)
         {
-            return View(new CreateNoteViewModel());
+            if (scratchpad <= 0)
+                return View(new CreateNoteViewModel());
+
+            var scratch = noteService.Scratchpads.FirstOrDefault(s => s.ScratchpadId == scratchpad);
+
+            if (scratch == null)
+                return View(new CreateNoteViewModel());
+
+            var items = noteService.Scratchpads.Where(s => s.ProjectId == scratch.ProjectId).ToList();
+
+            ViewBag.ScratchpadItems = new SelectList(items, nameof(Scratchpad.ScratchpadId), nameof(Scratchpad.Title), scratchpad);
+            return View(new CreateNoteViewModel()
+            {
+                Project = scratch.ProjectId,
+                Scratchpad = scratch.ScratchpadId
+            });
         }
 
         [HttpPost]
@@ -47,7 +64,20 @@ namespace Notes.Net.Controllers
                     new { project = project.Title, scratchpad = scratch.Title });
             }
             else
+            {
+                if (post.Scratchpad > 0)
+                {
+                    var scratch = noteService.Scratchpads.FirstOrDefault(s => s.ScratchpadId == post.Scratchpad);
+
+                    if (scratch != null)
+                    {
+                        var items = noteService.Scratchpads.Where(s => s.ProjectId == scratch.ProjectId).ToList();
+                        ViewBag.ScratchpadItems = new SelectList(items, nameof(Scratchpad.ScratchpadId), nameof(Scratchpad.Title), post.Scratchpad);
+                    }
+                }
+
                 return View(post);
+            }
         }
 
         [HttpPost("[controller]/{noteId:int}/save")]

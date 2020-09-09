@@ -24,7 +24,7 @@
     <div class="form-group">
         <label asp-for="Scratchpad"></label>
         <div><span asp-validation-for="Scratchpad" class="text-danger"></span></div>
-        <select id="sel-scratch" asp-for="Scratchpad" class="form-control">
+        <select id="sel-scratch" asp-for="Scratchpad" asp-items="ViewBag.ScratchpadItems" class="form-control">
             <option disabled selected value="">Select a Scratchpad</option>
         </select>
     </div>
@@ -35,8 +35,7 @@
 </form>
 
 <script type="text/javascript">
-    $(document).ready(function () {
-      $("#sel-project").on("change", function () {
+    function loadScratchpads() {
         $list = $("#sel-scratch");
         $.ajax({
             url: "/scratchpad/list",
@@ -53,6 +52,9 @@
                 showToast("Load scratchpads failed!");
             }
         });
-      });
+    }
+
+    $(document).ready(function () {
+        $("#sel-project").on("change", loadScratchpads);
     });
 </script>

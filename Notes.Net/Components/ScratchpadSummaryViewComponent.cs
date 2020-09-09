@@ -18,17 +18,9 @@ namespace Notes.Net.Components
 
         public IViewComponentResult Invoke()
         {
-            Scratchpad activeSP = null;
-            if ((string)RouteData.Values["controller"] == nameof(ScratchpadController) &&
-                RouteData.Values.ContainsKey("scratchpad"))
-            {
-                activeSP = noteService.Scratchpads.FirstOrDefault(s => s.Title == (string)RouteData.Values["scratchpad"]);
-            }
-
             return View(new ScratchpadSummaryViewModel
             {
                 Scratchpads = noteService.Scratchpads,
-                ActiveScratchpad = activeSP
             });
         }
     }

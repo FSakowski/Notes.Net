@@ -24,7 +24,7 @@ namespace Notes.Net.Infrastructure.TagHelpers
 
             foreach (Project proj in noteService.Projects)
             {
-                if (ModelFor.Model is Project selected && selected.ProjectId == proj.ProjectId)
+                if (ModelFor.Model is int selected && selected == proj.ProjectId)
                 {
                     output.Content.AppendHtml($"<option selected value=\"{proj.ProjectId}\">{proj.Title}</option>");
                 } else

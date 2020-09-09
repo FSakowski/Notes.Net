@@ -38,7 +38,7 @@
             </div>
             <div class="sidebar-content">
                 <div class="btn-group w-100">
-                    <a asp-action="Create" asp-controller="Note" class="btn btn-light">
+                    <a asp-action="Create" asp-controller="Note" asp-route-scratchpad="@ViewBag.Scratchpad" class="btn btn-light">
                         Create a new Note
                     </a>
                     <button type="button" class="btn btn-light dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
