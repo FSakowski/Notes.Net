@@ -1,12 +1,21 @@
 ﻿@model CreateNoteViewModel
 
+@section heads {
+    <environment include="Development">
+        <script type="text/javascript" src="~/js/create_note.js?@DateTime.Now.Ticks"></script>
+    </environment>
+    <environment exclude="Development">
+        <script type="text/javascript" src="~/js/create_note.js"></script>
+    </environment>
+}
+
 <h1>Create a new Note</h1>
 
 <form asp-action="Create" method="post">
     <div class="form-group">
         <label asp-for="Content"></label>
         <div><span asp-validation-for="Content" class="text-danger"></span></div>
-        <textarea asp-for="Content" class="form-control" >
+        <textarea asp-for="Content" class="form-control">
         </textarea>
     </div>
     <div class="form-group">
@@ -33,28 +42,3 @@
         <a asp-action="Index" asp-controller="Home" class="btn btn-secondary">Cancel</a>
     </div>
 </form>
-
-<script type="text/javascript">
-    function loadScratchpads() {
-        $list = $("#sel-scratch");
-        $.ajax({
-            url: "/scratchpad/list",
-            type: "GET",
-            data: { projectid: $("#sel-project").val() },
-            traditional: true,
-            success: function (result) {
-                $list.empty();
-                $.each(result, function (i, item) {
-                    $list.append('<option value="' + item["scratchpadId"] + '"> ' + item["title"] + ' </option>');
-                });
-            },
-            error: function () {
-                showToast("Load scratchpads failed!");
-            }
-        });
-    }
-
-    $(document).ready(function () {
-        $("#sel-project").on("change", loadScratchpads);
-    });
-</script>

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Notes.Net.Infrastructure;
 using Notes.Net.Models;
 using Notes.Net.Service;
 
@@ -35,6 +36,8 @@ namespace Notes.Net
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseMiddleware<SecurityPolicyMiddleware>();
 
             app.UseRouting();
             app.UseStaticFiles();

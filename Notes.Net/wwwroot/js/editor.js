@@ -115,4 +115,9 @@ $(document).ready(function () {
             saveNoteSize($(ui.helper));
         }
     });
+
+    console.log($("button").find("[data-mode='open']").length);
+
+    $("button[data-mode='open']").click(function () { openRTFEditor(this) });
+    $("button[data-mode='save']").click(function () { closeRTFEditor(this) });
 });

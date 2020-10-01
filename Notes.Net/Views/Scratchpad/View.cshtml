@@ -30,11 +30,11 @@
         <div class="card-header">@note.Title</div>
         <div class="card-body overflow-hidden">@Html.Raw(note.Content)</div>
         <div class="card-footer">
-            <button onclick="openRTFEditor(this)" class="btn btn-sm" data-mode="open">
+            <button class="btn btn-sm" data-mode="open">
                 <i class="fas fa-keyboard"></i>
                 <span>Edit this Note</span>
             </button>
-            <button onclick="closeRTFEditor(this)" class="btn btn-sm" style="display: none" data-mode="save">
+            <button class="btn btn-sm" style="display: none" data-mode="save">
                 <i class="fas fa-cloud-upload-alt"></i>
                 <span>Save your changes</span>
             </button>
