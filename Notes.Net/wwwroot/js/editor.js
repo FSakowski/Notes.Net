@@ -17,6 +17,7 @@
 
             $("<textarea></textarea>").appendTo(body).text(content).richText();
             note.find("[data-mode='save']").show();
+            note.find("[data-mode='delete'").show();
             $(sender).hide();
         }
     }
@@ -43,6 +44,7 @@ function closeRTFEditor(sender) {
             body.append(editor.val());
 
             note.find("[data-mode='open']").show();
+            note.find("[data-mode='delete'").hide();
             $(sender).hide();
         }
     }
@@ -98,6 +100,22 @@ function saveNoteSize(note) {
     })
 }
 
+function deleteNote(note) {
+    var id = note.data('note');
+
+    var url = "/note/" + id;
+
+    $.ajax({
+        method: "DELETE",
+        url: url
+    }).fail(function () {
+        showToast("Deleting note " + id + " failed!");
+    }).done(function () {
+        showToast("Note " + id + " has been removed!");
+        note.remove();
+    })
+}
+
 $(document).ready(function () {
     $(".card").draggable({
         handle: ".card-header",
@@ -120,4 +138,8 @@ $(document).ready(function () {
 
     $("button[data-mode='open']").click(function () { openRTFEditor(this) });
     $("button[data-mode='save']").click(function () { closeRTFEditor(this) });
+    $("button[data-mode='delete']").click(function () {
+        var note = $(this).closest("div[data-note]");
+        deleteNote(note);
+    });
 });

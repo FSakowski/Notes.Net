@@ -150,5 +150,22 @@ namespace Notes.Net.Controllers
 
             return Ok();
         }
+
+        [HttpDelete("[controller]/{noteId:int}")]
+        public IActionResult Delete(int noteId)
+        {
+            if (noteId <= 0)
+                ModelState.AddModelError("noteId", "note id may not be empty");
+
+            var note = noteService.Notes.FirstOrDefault(n => n.NoteId == noteId);
+            if (note == null)
+                ModelState.AddModelError("noteId", "note not found");
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            noteService.DeleteNote(note);
+            return Ok();
+        }
     }
 }
