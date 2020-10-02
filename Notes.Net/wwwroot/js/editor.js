@@ -9,7 +9,7 @@
             note.css("height", "");
 
             // set to front
-            note.css("z-index", 9999);
+            note.css("z-index", 999);
 
             var body = note.find(".card-body");
             var content = body.html();
