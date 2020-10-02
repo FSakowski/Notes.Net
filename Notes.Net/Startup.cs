@@ -1,10 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Notes.Net.Infrastructure;
@@ -37,7 +32,12 @@ namespace Notes.Net
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseMiddleware<SecurityPolicyMiddleware>();
+            app.UseCSP(
+                "default-src 'self' *.fontawesome.com;" + 
+                "img-src * data:;" + 
+                "media-src *;" + 
+                "style-src 'unsafe-inline' 'self'"
+                );
 
             app.UseRouting();
             app.UseStaticFiles();
