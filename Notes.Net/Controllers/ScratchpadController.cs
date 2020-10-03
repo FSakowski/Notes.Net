@@ -61,7 +61,7 @@ namespace Notes.Net.Controllers
                 ModelState.AddModelError(nameof(Scratchpad.ProjectId), "No Project selected");
 
             if (!ModelState.IsValid)
-            return View(post);
+                return View(post);
 
             Scratchpad scratch = new Scratchpad() { Title = post.Title, ProjectId = post.ProjectId };
 

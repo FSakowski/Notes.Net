@@ -80,6 +80,24 @@ namespace Notes.Net.Controllers
             }
         }
 
+        [HttpPost]
+        public IActionResult CreateQuickNote(QuickNoteViewModel post)
+        {
+            if (!ModelState.IsValid)
+            {
+                TempData["QuickNote"] = ModelState.First().Value.Errors.First().ErrorMessage;
+                return RedirectToAction("Index", "Home");
+            }
+
+            var note = noteService.SaveQuickNote(post.Content);
+
+            var scratch = noteService.Scratchpads.First(s => s.ScratchpadId == note.ScratchpadId);
+            var project = noteService.Projects.First(p => p.ProjectId == scratch.ProjectId);
+
+            return RedirectToAction("View", "Scratchpad",
+                new { project = project.Title, scratchpad = scratch.Title });
+        }
+
         [HttpPost("[controller]/{noteId:int}/save")]
         public async Task<IActionResult> Save(
             [FromRoute] int noteId)

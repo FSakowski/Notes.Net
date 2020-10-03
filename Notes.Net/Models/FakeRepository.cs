@@ -217,15 +217,6 @@ namespace Notes.Net.Models
                 if (proj.Scratchpads == null)
                 {
                     proj.Scratchpads = new List<Scratchpad>();
-
-                    var sp = new Scratchpad()
-                    {
-                        Title = "General",
-                        LastAccess = DateTime.Now,
-                        Owner = CurrentUser,
-                        Notes = new List<Note>()
-                    };
-                    SaveScratchpad(sp);
                 }
                 projects.Add(proj);
             } else

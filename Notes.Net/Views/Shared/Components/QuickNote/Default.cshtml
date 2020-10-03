@@ -1,0 +1,14 @@
+﻿@model QuickNoteViewModel
+
+<h3>Add a quick Note</h3>
+
+<form asp-action="CreateQuickNote" asp-controller="Note" method="post">
+    <div class="form-group">
+        <div><span class="text-danger">@TempData["QuickNote"]</span></div>
+        <textarea asp-for="Content" class="form-control" rows="6">
+        </textarea>
+    </div>
+    <div class="text-left">
+        <button class="btn btn-primary" type="submit">Save</button>
+    </div>
+</form>

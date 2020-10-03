@@ -22,5 +22,7 @@ namespace Notes.Net.Service
         public void DeleteNote(Note note);
 
         public void DeleteProject(Project proj);
+
+        public Note SaveQuickNote(string content);
     }
 }

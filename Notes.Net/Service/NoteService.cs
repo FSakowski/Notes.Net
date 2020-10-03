@@ -11,6 +11,18 @@ namespace Notes.Net.Service
 
         private readonly IRepository repository;
 
+        public string GeneralProjectTitle {
+            get {
+                return "General";
+            }
+        }
+
+        public string DefaultScratchpadTitle {
+            get {
+                return "Unsorted";
+            }
+        }
+
         public NoteService(IServiceContext serviceContext, IRepository repository)
         {
             this.serviceContext = serviceContext;
@@ -52,6 +64,36 @@ namespace Notes.Net.Service
             repository.SaveNote(note);
         }
 
+        public Note SaveQuickNote(string content)
+        {
+            if (string.IsNullOrEmpty(content))
+                throw new ArgumentNullException(nameof(content));
+
+            var project = repository.Projects.FirstOrDefault(p => p.Title == GeneralProjectTitle);
+            if (project == null)
+            {
+                project = new Project()
+                {
+                    Title = GeneralProjectTitle
+                };
+                SaveProject(project);
+            }
+
+            var scratch = EnsureDefaultScratchpadCreated(project);
+
+            var title = content.Substring(0, Math.Min(10, content.Length));
+
+            var note = new Note()
+            {
+                Content = content,
+                ScratchpadId = scratch.ScratchpadId,
+                Title = $"{DateTime.Now:yyyy-MM-dd HH:mm} {title}"
+            };
+
+            SaveNote(note);
+            return note;
+        }
+
         private void UpdateMetaData(Note note, bool newEntry)
         {
             if (newEntry)
@@ -63,6 +105,25 @@ namespace Notes.Net.Service
                 note.Modified   = DateTime.Now;
                 note.ModifiedBy = serviceContext.CurrentUser;
             }
+        }
+
+        private Scratchpad EnsureDefaultScratchpadCreated(Project proj)
+        {
+            var scratch = repository.Scratchpads.FirstOrDefault(s => s.ProjectId == proj.ProjectId && s.Title == DefaultScratchpadTitle);
+            if (scratch != null)
+                return scratch;
+
+            scratch = new Scratchpad()
+            {
+                Title = DefaultScratchpadTitle,
+                LastAccess = DateTime.Now,
+                Owner = serviceContext.CurrentUser,
+                Notes = new List<Note>(),
+                ProjectId = proj.ProjectId
+            };
+
+            SaveScratchpad(scratch);
+            return scratch;
         }
 
         public void MoveNoteToFreePosition(Note note)
@@ -90,6 +151,11 @@ namespace Notes.Net.Service
         public void SaveProject(Project proj)
         {
             repository.SaveProject(proj);
+
+            if (proj.Scratchpads.Count == 0)
+            {
+                EnsureDefaultScratchpadCreated(proj);
+            }
         }
 
         public void DeleteNote(Note note)
