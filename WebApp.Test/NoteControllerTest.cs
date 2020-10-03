@@ -127,9 +127,79 @@ namespace WebApp.Test
                 ControllerContext = controllerContext
             };
 
-            var result = controller.Save(1);
+            var result = controller.Save(1).Result;
 
+            Assert.IsType<OkResult>(result);
             Assert.Equal(string.Empty, service.Notes.First(n => n.NoteId == 1).Content);
+        }
+
+        [Fact]
+        public void Can_delete_a_note()
+        {
+            Mock<IRepository> mock = new Mock<IRepository>();
+            mock.Setup(m => m.Notes).Returns((new Note[]
+            {
+                new Note()
+                {
+                    NoteId = 1,
+                    Content = "Test"
+                }
+            }).AsQueryable());
+
+            NoteService service = new NoteService(new DefaultServiceContext(new Tenant() { Name = "Test", TenantId = 1 }), mock.Object);
+
+            var controller = new NoteController(service);
+            var result = controller.Delete(1);
+
+            Assert.IsType<OkResult>(result);
+            mock.Verify(m => m.DeleteNote(1), Times.Once);
+        }
+
+        [Fact]
+        public void Test_metadata_is_updated()
+        {
+            DateTime start = DateTime.Now;
+
+            Mock<IRepository> mock = new Mock<IRepository>();
+            mock.Setup(m => m.Notes).Returns((new Note[]
+            {
+                new Note()
+                {
+                    NoteId = 1,
+                    Content = "Test",
+                    Modified = new DateTime(2020, 1, 1, 12, 00, 00),
+                    ScratchpadId = 1
+                }
+            }).AsQueryable());
+
+            mock.Setup(m => m.Scratchpads).Returns((new Scratchpad[]
+            {
+                new Scratchpad() { ScratchpadId = 1}
+            }).AsQueryable());
+
+            NoteService service = new NoteService(new DefaultServiceContext(new Tenant() { Name = "Test", TenantId = 1 }), mock.Object);
+
+            var data = "Test 123";
+            var stream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(data));
+
+            var httpContext = new DefaultHttpContext();
+            httpContext.Request.Body = stream;
+            httpContext.Request.ContentLength = stream.Length;
+
+            var controllerContext = new ControllerContext()
+            {
+                HttpContext = httpContext
+            };
+
+            NoteController controller = new NoteController(service)
+            {
+                ControllerContext = controllerContext
+            };
+
+            var result = controller.Save(1).Result;
+            Assert.IsType<OkResult>(result);
+            Assert.Equal("Test 123", service.Notes.First(n => n.NoteId == 1).Content);
+            Assert.True(service.Notes.First(n => n.NoteId == 1).Modified >= start);
         }
     }
 }

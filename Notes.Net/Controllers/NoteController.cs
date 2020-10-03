@@ -99,7 +99,7 @@ namespace Notes.Net.Controllers
                 string plainText = await reader.ReadToEndAsync();
                 var sanitizer = new HtmlSanitizer();
                 note.Content = sanitizer.Sanitize(plainText, $"{Request.Scheme}://{Request.Host}{Request.PathBase}");
-                noteService.SaveNote(note, false);
+                noteService.SaveNote(note);
             }
 
             return Ok();
