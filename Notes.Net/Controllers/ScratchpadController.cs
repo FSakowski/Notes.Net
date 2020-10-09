@@ -18,7 +18,7 @@ namespace Notes.Net.Controllers
             noteService = service;
         }
 
-        [Route("/scratchpad/{id:int}")]
+        [Route("[controller]/{id:int}")]
         public IActionResult View([Required] int id)
         {
             var sp = noteService.Scratchpads.FirstOrDefault(s => s.ScratchpadId == id);
@@ -29,7 +29,7 @@ namespace Notes.Net.Controllers
             return View(sp);
         }
 
-        [Route("/scratchpad/{project}/{scratchpad}")]
+        [Route("[controller]/{project}/{scratchpad}")]
         public IActionResult View([Required] string project, [Required] string scratchpad)
         {
             var proj = noteService.Projects.FirstOrDefault(p => p.Title == project);

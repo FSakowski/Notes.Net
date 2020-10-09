@@ -27,7 +27,14 @@
 @foreach (var note in Model.Notes)
 {
     <note data="@note" class="card">
-        <div class="card-header">@note.Title</div>
+        <div class="card-header">
+            <div class="mousehover">
+                @note.Title
+                <a asp-controller="note" asp-action="edit" asp-route-id="@note.NoteId" class="btn btn-sm btn-light hide">
+                    <i class="fas fa-pencil-alt"></i>
+                </a>
+            </div>
+        </div>
         <div class="card-body overflow-hidden">@Html.Raw(note.Content)</div>
         <div class="card-footer">
             <button class="btn btn-sm" data-mode="open">

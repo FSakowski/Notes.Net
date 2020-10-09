@@ -11,17 +11,13 @@ namespace Notes.Net.Service
 
         private readonly IRepository repository;
 
-        public string GeneralProjectTitle {
-            get {
-                return "General";
-            }
-        }
+        public string GeneralProjectTitle => "General";
 
-        public string DefaultScratchpadTitle {
-            get {
-                return "Unsorted";
-            }
-        }
+        public string DefaultScratchpadTitle => "Unsorted";
+
+        public int DefaultWidth => 300;
+
+        public int DefaultHeight => 200;
 
         public NoteService(IServiceContext serviceContext, IRepository repository)
         {
@@ -50,11 +46,14 @@ namespace Notes.Net.Service
 
             if (newEntry)
             {
+                note.Created = DateTime.Now;
+                note.CreatedBy = serviceContext.CurrentUser;
+
                 if (note.Width == 0 || note.Height == 0)
                 {
                     // apply default size
-                    note.Width = 300;
-                    note.Height = 200;
+                    note.Width = DefaultWidth;
+                    note.Height = DefaultHeight;
                 }
 
                 if (note.PosX == 0 && note.PosY == 0)

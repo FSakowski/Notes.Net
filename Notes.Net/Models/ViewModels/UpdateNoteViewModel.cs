@@ -2,8 +2,10 @@
 
 namespace Notes.Net.Models.ViewModels
 {
-    public class CreateNoteViewModel
+    public class UpdateNoteViewModel
     {
+        public int NoteId { get; set; }
+
         [Required]
         [MaxLength(40)]
         public string Title { get; set; }

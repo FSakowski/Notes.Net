@@ -26,17 +26,17 @@ namespace Notes.Net.Controllers
         public IActionResult Create([FromQuery] int scratchpad)
         {
             if (scratchpad <= 0)
-                return View(new CreateNoteViewModel());
+                return View(new UpdateNoteViewModel());
 
             var scratch = noteService.Scratchpads.FirstOrDefault(s => s.ScratchpadId == scratchpad);
 
             if (scratch == null)
-                return View(new CreateNoteViewModel());
+                return View(new UpdateNoteViewModel());
 
             var items = noteService.Scratchpads.Where(s => s.ProjectId == scratch.ProjectId).ToList();
 
             ViewBag.ScratchpadItems = new SelectList(items, nameof(Scratchpad.ScratchpadId), nameof(Scratchpad.Title), scratchpad);
-            return View(new CreateNoteViewModel()
+            return View(new UpdateNoteViewModel()
             {
                 Project = scratch.ProjectId,
                 Scratchpad = scratch.ScratchpadId
@@ -44,7 +44,7 @@ namespace Notes.Net.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create([Required] CreateNoteViewModel post)
+        public IActionResult Create([Required] UpdateNoteViewModel post)
         {
             if (ModelState.IsValid)
             {
@@ -96,6 +96,62 @@ namespace Notes.Net.Controllers
 
             return RedirectToAction("View", "Scratchpad",
                 new { project = project.Title, scratchpad = scratch.Title });
+        }
+
+        [HttpGet]
+        public IActionResult Edit(int id)
+        {
+            var note = noteService.Notes.FirstOrDefault(n => n.NoteId == id);
+            if (note == null)
+                return NotFound(id);
+
+            var scratch = noteService.Scratchpads.First(s => s.ScratchpadId == note.ScratchpadId);
+            var items = noteService.Scratchpads.Where(s => s.ProjectId == scratch.ProjectId).ToList();
+            ViewBag.ScratchpadItems = new SelectList(items, nameof(Scratchpad.ScratchpadId), nameof(Scratchpad.Title), scratch);
+
+            return View(new UpdateNoteViewModel()
+            {
+                NoteId = note.NoteId,
+                Title = note.Title,
+                Scratchpad = scratch.ScratchpadId,
+                Project = scratch.ProjectId,
+                Content = note.Content
+            }); ;
+        }
+
+        [HttpPost]
+        public IActionResult Edit(UpdateNoteViewModel post)
+        {
+            var note = noteService.Notes.First(n => n.NoteId == post.NoteId);
+
+            if (ModelState.IsValid)
+            {
+                note.Title = post.Title;
+                note.ScratchpadId = post.Scratchpad.Value;
+
+                noteService.SaveNote(note);
+
+                var scratch = noteService.Scratchpads.First(s => s.ScratchpadId == note.ScratchpadId);
+                var project = noteService.Projects.First(p => p.ProjectId == scratch.ProjectId);
+
+                return RedirectToAction("View", "Scratchpad",
+                    new { project = project.Title, scratchpad = scratch.Title });
+            }
+            else
+            {
+                if (post.Scratchpad > 0)
+                {
+                    var scratch = noteService.Scratchpads.FirstOrDefault(s => s.ScratchpadId == post.Scratchpad);
+
+                    if (scratch != null)
+                    {
+                        var items = noteService.Scratchpads.Where(s => s.ProjectId == scratch.ProjectId).ToList();
+                        ViewBag.ScratchpadItems = new SelectList(items, nameof(Scratchpad.ScratchpadId), nameof(Scratchpad.Title), post.Scratchpad);
+                    }
+                }
+
+                return View(post);
+            }
         }
 
         [HttpPost("[controller]/{noteId:int}/save")]

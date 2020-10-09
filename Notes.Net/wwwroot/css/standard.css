@@ -116,14 +116,19 @@
 }
 
 .hide {
-    display: none;
+    visibility: hidden;
 }
 
 .mousehover:hover > .hide {
-    display: inline;
+    visibility: visible;
 }
 
 .link-unstyled, .link-unstyled:link, .link-unstyled:hover {
     color: inherit;
     text-decoration: inherit;
+}
+
+/* fix z-index is set to high */
+.ui-resizable-handle {
+    z-index: auto !important;
 }

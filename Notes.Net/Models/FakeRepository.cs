@@ -167,9 +167,16 @@ namespace Notes.Net.Models
 
                 var scratch = Scratchpads.First(s => s.ScratchpadId == note.ScratchpadId);
                 scratch.Notes.Add(note);
-            } else
+            }
+            else
             {
                 var db = Notes.First(n => n.NoteId == note.NoteId);
+
+                foreach (var scratch in Scratchpads)
+                    scratch.Notes.Remove(db);
+
+                Scratchpads.First(s => s.ScratchpadId == note.ScratchpadId).Notes.Add(db);
+
                 db.Title = note.Title;
                 db.Content = note.Content;
                 db.Created = note.Created;
