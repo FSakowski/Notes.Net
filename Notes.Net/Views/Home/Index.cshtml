@@ -2,6 +2,12 @@
 
 <h1>Notes.Net</h1>
 
+@if (TempData.ContainsKey("Message")) {
+    <div class="alert alert-primary" role="alert">
+        @TempData["Message"]
+    </div>
+}
+
 <h4>Statistics on the usage of Notes.Net:</h4>
 <table class="table table-borderless table-striped table-sm">
     <tr>

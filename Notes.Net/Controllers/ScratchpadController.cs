@@ -103,5 +103,17 @@ namespace Notes.Net.Controllers
         {
             return noteService.Scratchpads.Where(s => s.ProjectId == projectId).ToList();
         }
+
+        [HttpPost]
+        public IActionResult Delete([Required] int scratchpadId)
+        {
+            var scratch = noteService.Scratchpads.FirstOrDefault(s => s.ScratchpadId == scratchpadId);
+            if (scratch == null)
+                return NotFound(scratchpadId);
+
+            noteService.DeleteScratchpad(scratch);
+            TempData.Add("Message", $"Scratchpad '{scratch.Title}' has been removed");
+            return RedirectToAction("Index", "Home");
+        }
     }
 }

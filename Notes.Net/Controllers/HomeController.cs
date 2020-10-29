@@ -21,7 +21,7 @@ namespace Notes.Net.Controllers
         {
             Task<int> totalSPCount = Task.Run(() => noteService.Scratchpads.Count());
             Task<int> totalNCount = Task.Run(() => noteService.Notes.Count());
-            Task<int> totalContent = Task.Run(() => noteService.Notes.Sum(n => n.Content.Length));
+            Task<int> totalContent = Task.Run(() => noteService.Notes.Sum(n => n.Content == null ? 0 : n.Content.Length));
 
             await Task.WhenAll(totalSPCount, totalNCount, totalContent);
             return View(new UsageViewModel()

@@ -22,3 +22,9 @@
         <a asp-action="Index" asp-controller="Home" class="btn btn-secondary">Cancel</a>
     </div>
 </form>
+<form asp-action="Delete" method="post" style="margin-top: 2em">
+    <input type="hidden" asp-for="ScratchpadId" />
+    <div class="text-left">
+        <button class="btn btn-outline-danger active dead-mans-handle" type="submit">Hold mouse pressed to delete this Scratchpad</button>
+    </div>
+</form>

@@ -132,3 +132,18 @@
 .ui-resizable-handle {
     z-index: auto !important;
 }
+
+@keyframes progressbar {
+    0% {
+        background-color: #fff;
+    }
+
+    100% {
+        background: #dc3545;
+    }
+}
+
+.progress-animation {
+    animation-name: progressbar;
+    animation-duration: 4s;
+}
