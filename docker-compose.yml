@@ -1,0 +1,38 @@
+version: '3'
+
+services:
+  notes.net:
+    image: ${DOCKER_REGISTRY-}notesnet
+    build:
+      context: .
+      dockerfile: Notes.Net/Dockerfile
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres
+    hostname: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: app
+      POSTGRES_DB: notes
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    ports:
+       - "5432:5432"
+  
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: always
+    depends_on:
+     - postgres
+    environment:
+      PGADMIN_DEFAULT_EMAIL: email@florian-sakowski.de
+      PGADMIN_DEFAULT_PASSWORD: app
+      PGADMIN_LISTEN_PORT: 80
+    ports:
+     - "8080:80"
+
+volumes:
+  db-data:

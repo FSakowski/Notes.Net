@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Notes.Net.Models.ViewModels;
 using Notes.Net.Service;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Notes.Net.Controllers
@@ -19,16 +17,15 @@ namespace Notes.Net.Controllers
 
         public async Task<ViewResult> Index()
         {
-            Task<int> totalSPCount = Task.Run(() => noteService.Scratchpads.Count());
-            Task<int> totalNCount = Task.Run(() => noteService.Notes.Count());
-            Task<int> totalContent = Task.Run(() => noteService.Notes.Sum(n => n.Content == null ? 0 : n.Content.Length));
+            int totalSPCount = await noteService.Scratchpads.CountAsync();
+            int totalNCount = await noteService.Notes.CountAsync();
+            int totalContent = await noteService.Notes.SumAsync(n => n.Content == null ? 0 : n.Content.Length);
 
-            await Task.WhenAll(totalSPCount, totalNCount, totalContent);
             return View(new UsageViewModel()
             {
-                TotalScratchpads = totalSPCount.Result,
-                TotalNotes = totalNCount.Result,
-                TotalContent = totalContent.Result
+                TotalScratchpads = totalSPCount,
+                TotalNotes = totalNCount,
+                TotalContent = totalContent
             });
         }
     }

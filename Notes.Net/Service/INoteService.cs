@@ -1,5 +1,6 @@
 ﻿using Notes.Net.Models;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Notes.Net.Service
 {
@@ -11,18 +12,18 @@ namespace Notes.Net.Service
 
         public IQueryable<Note> Notes { get; }
 
-        public void SaveScratchpad(Scratchpad sp);
+        public Task SaveScratchpadAsync(Scratchpad sp);
 
-        public void SaveNote(Note note, bool updateMetaData = true);
+        public Task SaveNoteAsync(Note note, bool updateMetaData = true);
 
-        public void SaveProject(Project proj);
+        public Task SaveProjectAsync(Project proj);
 
-        public void DeleteScratchpad(Scratchpad sp);
+        public Task DeleteScratchpadAsync(Scratchpad sp);
 
-        public void DeleteNote(Note note);
+        public Task DeleteNoteAsync(Note note);
 
-        public void DeleteProject(Project proj);
+        public Task DeleteProjectAsync(Project proj);
 
-        public Note SaveQuickNote(string content);
+        public Task<Note> SaveQuickNoteAsync(string content);
     }
 }

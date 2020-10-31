@@ -55,7 +55,7 @@ namespace Notes.Net.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(Scratchpad post)
+        public async Task<IActionResult> Create(Scratchpad post)
         {
             if (post.ProjectId <= 0)
                 ModelState.AddModelError(nameof(Scratchpad.ProjectId), "No Project selected");
@@ -65,7 +65,7 @@ namespace Notes.Net.Controllers
 
             Scratchpad scratch = new Scratchpad() { Title = post.Title, ProjectId = post.ProjectId };
 
-            noteService.SaveScratchpad(scratch);
+            await noteService.SaveScratchpadAsync(scratch);
 
             var proj = noteService.Projects.First(p => p.ProjectId == scratch.ProjectId);
 
@@ -84,12 +84,12 @@ namespace Notes.Net.Controllers
         }
 
         [HttpPost]
-        public IActionResult Edit(Scratchpad scratchpad)
+        public async Task<IActionResult> Edit(Scratchpad scratchpad)
         {
             if (!ModelState.IsValid)
                 return View(scratchpad);
 
-            noteService.SaveScratchpad(scratchpad);
+            await noteService.SaveScratchpadAsync(scratchpad);
 
             var proj = noteService.Projects.First(p => p.ProjectId == scratchpad.ProjectId);
 
@@ -105,13 +105,13 @@ namespace Notes.Net.Controllers
         }
 
         [HttpPost]
-        public IActionResult Delete([Required] int scratchpadId)
+        public async Task<IActionResult> Delete([Required] int scratchpadId)
         {
             var scratch = noteService.Scratchpads.FirstOrDefault(s => s.ScratchpadId == scratchpadId);
             if (scratch == null)
                 return NotFound(scratchpadId);
 
-            noteService.DeleteScratchpad(scratch);
+            await noteService.DeleteScratchpadAsync(scratch);
             TempData.Add("Message", $"Scratchpad '{scratch.Title}' has been removed");
             return RedirectToAction("Index", "Home");
         }

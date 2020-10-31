@@ -1,32 +1,24 @@
-﻿using Notes.Net.Models;
-using System;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Notes.Net.Models;
+using System.Threading.Tasks;
 
 namespace Notes.Net.Service
 {
     public class DefaultServiceContext : IServiceContext
     {
-        private static readonly Dictionary<Type, int> _numbers = new Dictionary<Type, int>();
+        private readonly IHttpContextAccessor httpContextAccessor;
+        private readonly UserManager<User> userManager;
 
-        public Tenant CurrentTenant { get; private set; }
-
-        public User CurrentUser => new User { UserId = 1, Name = "Florian", Admin = true };
-
-        public DefaultServiceContext(Tenant tenant)
+        public DefaultServiceContext(IHttpContextAccessor httpContextAccessor, UserManager<User> userManager)
         {
-            CurrentTenant = tenant;
+            this.httpContextAccessor = httpContextAccessor;
+            this.userManager = userManager;
         }
 
-        public int GetNextFreeNumber<T>()
+        public async Task<User> GetCurrentUser()
         {
-            int no = 1;
-
-            if (_numbers.ContainsKey(typeof(T)))
-                no = _numbers[typeof(T)]++;
-
-            _numbers[typeof(T)] = no;
-
-            return no;
+            return await userManager.GetUserAsync(httpContextAccessor.HttpContext.User);
         }
     }
 }

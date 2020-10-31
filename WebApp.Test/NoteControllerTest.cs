@@ -146,13 +146,20 @@ namespace WebApp.Test
                 }
             }).AsQueryable());
 
-            NoteService service = new NoteService(new DefaultServiceContext(new Tenant() { Name = "Test", TenantId = 1 }), mock.Object);
+            Mock<IServiceContext> mock2 = new Mock<IServiceContext>();
+            mock2.Setup(m => m.GetCurrentUser()).ReturnsAsync(new User()
+            {
+                UserId = 1,
+                Name = "admin"
+            });
+
+            NoteService service = new NoteService(mock2.Object, mock.Object);
 
             var controller = new NoteController(service);
             var result = controller.Delete(1);
 
             Assert.IsType<OkResult>(result);
-            mock.Verify(m => m.DeleteNote(1), Times.Once);
+            mock.Verify(m => m.DeleteNoteAsync(1), Times.Once);
         }
 
         [Fact]
@@ -177,7 +184,14 @@ namespace WebApp.Test
                 new Scratchpad() { ScratchpadId = 1}
             }).AsQueryable());
 
-            NoteService service = new NoteService(new DefaultServiceContext(new Tenant() { Name = "Test", TenantId = 1 }), mock.Object);
+            Mock<IServiceContext> mock2 = new Mock<IServiceContext>();
+            mock2.Setup(m => m.GetCurrentUser()).ReturnsAsync(new User()
+            {
+                UserId = 1,
+                Name = "admin"
+            });
+
+            NoteService service = new NoteService(mock2.Object, mock.Object);
 
             var data = "Test 123";
             var stream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(data));

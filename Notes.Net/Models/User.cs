@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Notes.Net.Models
 {
@@ -15,6 +11,8 @@ namespace Notes.Net.Models
 
         public bool Admin { get; set; }
 
-        public Tenant Membership { get; set; }
+        public string Passwort { get; set; }
+
+        public string Email { get; set; }
     }
 }

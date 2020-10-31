@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
 
 namespace Notes.Net.Models
 {
@@ -10,16 +11,22 @@ namespace Notes.Net.Models
 
         public IQueryable<Note> Notes { get; }
 
-        public void SaveScratchpad(Scratchpad sp);
+        public IQueryable<User> Users { get; }
 
-        public void SaveNote(Note note);
+        public Task SaveScratchpadAsync(Scratchpad sp);
 
-        public void SaveProject(Project proj);
+        public Task SaveNoteAsync(Note note);
 
-        public void DeleteScratchpad(int sratchpadId);
+        public Task SaveProjectAsync(Project proj);
 
-        public void DeleteNote(int noteId);
+        public Task DeleteScratchpadAsync(int scratchpadId);
 
-        public void DeleteProject(int projectId);
+        public Task DeleteNoteAsync(int noteId);
+
+        public Task DeleteProjectAsync(int projectId);
+
+        public Task SaveUserAsync(User user);
+
+        public Task DeleteUserAsync(int userId);
     }
 }

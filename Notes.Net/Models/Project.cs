@@ -16,6 +16,11 @@ namespace Notes.Net.Models
         [JsonIgnore]
         public ICollection<Scratchpad> Scratchpads { get; set; }
 
-        public Tenant Owner { get; set; }
+        public User Owner { get; set; }
+
+        public Project()
+        {
+            Scratchpads = new HashSet<Scratchpad>();
+        }
     }
 }

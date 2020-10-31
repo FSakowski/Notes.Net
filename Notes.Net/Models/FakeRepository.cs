@@ -13,6 +13,8 @@ namespace Notes.Net.Models
 
         private readonly List<Note> notes = new List<Note>();
 
+        private readonly List<User> users = new List<User>();
+
         private readonly User CurrentUser = new User()
         {
             Admin = true,
@@ -25,6 +27,8 @@ namespace Notes.Net.Models
         public IQueryable<Scratchpad> Scratchpads => scratchpads.AsQueryable();
 
         public IQueryable<Note> Notes => notes.AsQueryable();
+
+        public IQueryable<User> Users => users.AsQueryable();
 
         public FakeRepository()
         {
@@ -128,7 +132,7 @@ namespace Notes.Net.Models
             scratchpads.AddRange(proj.Scratchpads);
         }
 
-        public void DeleteNote(int noteId)
+        public Task DeleteNoteAsync(int noteId)
         {
             var note = notes.FirstOrDefault(n => n.NoteId == noteId);
             if (note == null)
@@ -136,9 +140,10 @@ namespace Notes.Net.Models
 
             scratchpads.Where(sp => sp.Notes.Contains(note)).ToList().ForEach(sp => sp.Notes.Remove(note));
             notes.Remove(note);
+            return Task.CompletedTask;
         }
 
-        public void DeleteScratchpad(int scratchpadId)
+        public Task DeleteScratchpadAsync(int scratchpadId)
         {
             var scratchpad = scratchpads.FirstOrDefault(s => s.ScratchpadId == scratchpadId);
             if (scratchpad == null)
@@ -147,18 +152,20 @@ namespace Notes.Net.Models
             projects.Where(p => p.Scratchpads.Contains(scratchpad)).ToList().ForEach(p => p.Scratchpads.Remove(scratchpad));
 
             scratchpads.Remove(scratchpad);
+            return Task.CompletedTask;
         }
 
-        public void DeleteProject(int projectId)
+        public Task DeleteProjectAsync(int projectId)
         {
             var project = projects.FirstOrDefault(p => p.ProjectId == projectId);
             if (project == null)
                 throw new ArgumentException("project not found", nameof(projectId));
 
             projects.Remove(project);
+            return Task.CompletedTask;
         }
 
-        public void SaveNote(Note note)
+        public Task SaveNoteAsync(Note note)
         {
             if (note.NoteId == 0)
             {
@@ -189,9 +196,11 @@ namespace Notes.Net.Models
                 db.PosY = note.PosY;
                 db.ScratchpadId = note.ScratchpadId;
             }
+
+            return Task.CompletedTask;
         }
 
-        public void SaveScratchpad(Scratchpad sp)
+        public Task SaveScratchpadAsync(Scratchpad sp)
         {
             if (sp.ScratchpadId == 0)
             {
@@ -208,29 +217,57 @@ namespace Notes.Net.Models
                 db.ProjectId = sp.ProjectId;
                 db.Title = sp.Title;
             }
+
+            return Task.CompletedTask;
         }
 
-        public void SaveProject(Project proj)
+        public Task SaveProjectAsync(Project proj)
         {
             if (proj.ProjectId == 0)
             {
                 proj.ProjectId = projects.Count == 0 ? 1 : projects.Last().ProjectId + 1;
-                proj.Owner = new Tenant()
-                {
-                    TenantId = 1,
-                    Name = "Test"
-                };
 
                 if (proj.Scratchpads == null)
                 {
                     proj.Scratchpads = new List<Scratchpad>();
                 }
                 projects.Add(proj);
-            } else
+            }
+            else
             {
                 var db = Projects.First(p => p.ProjectId == proj.ProjectId);
                 db.Title = proj.Title;
             }
+
+            return Task.CompletedTask;
+        }
+
+        public Task SaveUserAsync(User user)
+        {
+            if (user.UserId == 0)
+            {
+                users.Add(user);
+            }
+            else
+            {
+                var db = users.First(u => u.UserId == user.UserId);
+                db.Name = user.Name;
+                db.Passwort = user.Passwort;
+                db.Email = user.Email;
+                db.Admin = user.Admin;
+            }
+
+            return Task.CompletedTask;
+        }
+
+        public Task DeleteUserAsync(int userId)
+        {
+            var user = users.FirstOrDefault(u => u.UserId == userId);
+            if (user == null)
+                throw new ArgumentException("user not found", nameof(userId));
+
+            users.Remove(user);
+            return Task.CompletedTask;
         }
     }
 }

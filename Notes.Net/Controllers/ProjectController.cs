@@ -3,6 +3,7 @@ using Notes.Net.Models;
 using Notes.Net.Service;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Notes.Net.Controllers
 {
@@ -22,11 +23,11 @@ namespace Notes.Net.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create([Required] Project project)
+        public async Task<IActionResult> Create([Required] Project project)
         {
             if (ModelState.IsValid)
             {
-                noteService.SaveProject(project);
+                await noteService.SaveProjectAsync(project);
                 return RedirectToAction("View", "Scratchpad", 
                     new { project = project.Title, scratchpad = project.Scratchpads.FirstOrDefault()?.Title });
             } else

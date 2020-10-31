@@ -44,7 +44,7 @@ namespace Notes.Net.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create([Required] UpdateNoteViewModel post)
+        public async Task<IActionResult> Create([Required] UpdateNoteViewModel post)
         {
             if (ModelState.IsValid)
             {
@@ -55,7 +55,7 @@ namespace Notes.Net.Controllers
                     Content = post.Content
                 };
 
-                noteService.SaveNote(note);
+                await noteService.SaveNoteAsync(note);
 
                 var scratch = noteService.Scratchpads.First(s => s.ScratchpadId == note.ScratchpadId);
                 var project = noteService.Projects.First(p => p.ProjectId == scratch.ProjectId);
@@ -81,7 +81,7 @@ namespace Notes.Net.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateQuickNote(QuickNoteViewModel post)
+        public async Task<IActionResult> CreateQuickNote(QuickNoteViewModel post)
         {
             if (!ModelState.IsValid)
             {
@@ -89,7 +89,7 @@ namespace Notes.Net.Controllers
                 return RedirectToAction("Index", "Home");
             }
 
-            var note = noteService.SaveQuickNote(post.Content);
+            var note = await noteService.SaveQuickNoteAsync(post.Content);
 
             var scratch = noteService.Scratchpads.First(s => s.ScratchpadId == note.ScratchpadId);
             var project = noteService.Projects.First(p => p.ProjectId == scratch.ProjectId);
@@ -120,7 +120,7 @@ namespace Notes.Net.Controllers
         }
 
         [HttpPost]
-        public IActionResult Edit(UpdateNoteViewModel post)
+        public async Task<IActionResult> Edit(UpdateNoteViewModel post)
         {
             var note = noteService.Notes.First(n => n.NoteId == post.NoteId);
 
@@ -129,7 +129,7 @@ namespace Notes.Net.Controllers
                 note.Title = post.Title;
                 note.ScratchpadId = post.Scratchpad.Value;
 
-                noteService.SaveNote(note);
+                await noteService.SaveNoteAsync(note);
 
                 var scratch = noteService.Scratchpads.First(s => s.ScratchpadId == note.ScratchpadId);
                 var project = noteService.Projects.First(p => p.ProjectId == scratch.ProjectId);
@@ -173,14 +173,14 @@ namespace Notes.Net.Controllers
                 string plainText = await reader.ReadToEndAsync();
                 var sanitizer = new HtmlSanitizer();
                 note.Content = sanitizer.Sanitize(plainText, $"{Request.Scheme}://{Request.Host}{Request.PathBase}");
-                noteService.SaveNote(note);
+                await noteService.SaveNoteAsync(note);
             }
 
             return Ok();
         }
 
         [HttpPost("[controller]/{noteId:int}/savepos/@{x:int},{y:int}")]
-        public IActionResult SavePosition(
+        public async Task<IActionResult> SavePosition(
             [FromRoute] int noteId,
             [FromRoute] int x,
             [FromRoute] int y)
@@ -197,13 +197,13 @@ namespace Notes.Net.Controllers
 
             note.PosX = x;
             note.PosY = y;
-            noteService.SaveNote(note, false);
+            await noteService.SaveNoteAsync(note, false);
 
             return Ok();
         }
 
         [HttpPost("[controller]/{noteId:int}/savesize/{w:int}x{h:int}")]
-        public IActionResult SaveSize(
+        public async Task<IActionResult> SaveSize(
             [FromRoute] int noteId,
             [FromRoute] int w,
             [FromRoute] int h)
@@ -220,13 +220,13 @@ namespace Notes.Net.Controllers
 
             note.Width = w;
             note.Height = h;
-            noteService.SaveNote(note, false);
+            await noteService.SaveNoteAsync(note, false);
 
             return Ok();
         }
 
         [HttpDelete("[controller]/{noteId:int}")]
-        public IActionResult Delete(int noteId)
+        public async Task<IActionResult> Delete(int noteId)
         {
             if (noteId <= 0)
                 ModelState.AddModelError("noteId", "note id may not be empty");
@@ -238,7 +238,7 @@ namespace Notes.Net.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            noteService.DeleteNote(note);
+            await noteService.DeleteNoteAsync(note);
             return Ok();
         }
     }

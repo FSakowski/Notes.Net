@@ -23,5 +23,10 @@ namespace Notes.Net.Models
         public DateTime LastAccess { get; set; }
 
         public User Owner { get; set; }
+
+        public Scratchpad()
+        {
+            Notes = new HashSet<Note>();
+        }
     }
 }

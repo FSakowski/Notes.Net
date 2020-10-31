@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Notes.Net.Service
 {
@@ -31,12 +32,12 @@ namespace Notes.Net.Service
 
         public IQueryable<Note> Notes => repository.Notes;
 
-        public void SaveNote(Note note, bool updateMetaData = true)
+        public async Task SaveNoteAsync(Note note, bool updateMetaData = true)
         {
             bool newEntry = note.NoteId == 0;
 
             if (updateMetaData || newEntry)
-                UpdateMetaData(note, newEntry);
+                await UpdateMetaData(note, newEntry);
 
             if (note.ScratchpadId <= 0)
                 throw new ArgumentException("note was not assigned to a scratchpad", nameof(note));
@@ -47,7 +48,7 @@ namespace Notes.Net.Service
             if (newEntry)
             {
                 note.Created = DateTime.Now;
-                note.CreatedBy = serviceContext.CurrentUser;
+                note.CreatedBy = await serviceContext.GetCurrentUser();
 
                 if (note.Width == 0 || note.Height == 0)
                 {
@@ -60,10 +61,10 @@ namespace Notes.Net.Service
                     MoveNoteToFreePosition(note);
             }
 
-            repository.SaveNote(note);
+            await repository.SaveNoteAsync(note);
         }
 
-        public Note SaveQuickNote(string content)
+        public async Task<Note> SaveQuickNoteAsync(string content)
         {
             if (string.IsNullOrEmpty(content))
                 throw new ArgumentNullException(nameof(content));
@@ -75,10 +76,10 @@ namespace Notes.Net.Service
                 {
                     Title = GeneralProjectTitle
                 };
-                SaveProject(project);
+                await SaveProjectAsync(project);
             }
 
-            var scratch = EnsureDefaultScratchpadCreated(project);
+            var scratch = await EnsureDefaultScratchpadCreated(project);
 
             var title = content.Substring(0, Math.Min(10, content.Length));
 
@@ -89,24 +90,24 @@ namespace Notes.Net.Service
                 Title = $"{DateTime.Now:yyyy-MM-dd HH:mm} {title}"
             };
 
-            SaveNote(note);
+            await SaveNoteAsync(note);
             return note;
         }
 
-        private void UpdateMetaData(Note note, bool newEntry)
+        private async Task UpdateMetaData(Note note, bool newEntry)
         {
             if (newEntry)
             {
                 note.Created   = DateTime.Now;
-                note.CreatedBy = serviceContext.CurrentUser;
+                note.CreatedBy = await serviceContext.GetCurrentUser();
             } else
             {
                 note.Modified   = DateTime.Now;
-                note.ModifiedBy = serviceContext.CurrentUser;
+                note.ModifiedBy = await serviceContext.GetCurrentUser();
             }
         }
 
-        private Scratchpad EnsureDefaultScratchpadCreated(Project proj)
+        private async Task<Scratchpad> EnsureDefaultScratchpadCreated(Project proj)
         {
             var scratch = repository.Scratchpads.FirstOrDefault(s => s.ProjectId == proj.ProjectId && s.Title == DefaultScratchpadTitle);
             if (scratch != null)
@@ -116,12 +117,12 @@ namespace Notes.Net.Service
             {
                 Title = DefaultScratchpadTitle,
                 LastAccess = DateTime.Now,
-                Owner = serviceContext.CurrentUser,
+                Owner = await serviceContext.GetCurrentUser(),
                 Notes = new List<Note>(),
                 ProjectId = proj.ProjectId
             };
 
-            SaveScratchpad(scratch);
+            await SaveScratchpadAsync(scratch);
             return scratch;
         }
 
@@ -134,7 +135,7 @@ namespace Notes.Net.Service
             note.PosY = (lstNote == null ? 120 : lstNote.PosY + lstNote.Height) + margin;
         }
 
-        public void SaveScratchpad(Scratchpad sp)
+        public async Task SaveScratchpadAsync(Scratchpad sp)
         {
             if (sp.ProjectId <= 0)
                 throw new ArgumentException("scratchpad was not assigned to a project", nameof(sp));
@@ -144,32 +145,32 @@ namespace Notes.Net.Service
 
             sp.LastAccess = DateTime.Now;
 
-            repository.SaveScratchpad(sp);
+            await repository.SaveScratchpadAsync(sp);
         }
 
-        public void SaveProject(Project proj)
+        public async Task SaveProjectAsync(Project proj)
         {
-            repository.SaveProject(proj);
+            await repository.SaveProjectAsync(proj);
 
             if (proj.Scratchpads.Count == 0)
             {
-                EnsureDefaultScratchpadCreated(proj);
+                await EnsureDefaultScratchpadCreated(proj);
             }
         }
 
-        public void DeleteNote(Note note)
+        public async Task DeleteNoteAsync(Note note)
         {
-            repository.DeleteNote(note.NoteId);
+            await repository.DeleteNoteAsync(note.NoteId);
         }
 
-        public void DeleteScratchpad(Scratchpad sp)
+        public async Task DeleteScratchpadAsync(Scratchpad sp)
         {
-            repository.DeleteScratchpad(sp.ScratchpadId);
+            await repository.DeleteScratchpadAsync(sp.ScratchpadId);
         }
 
-        public void DeleteProject(Project proj)
+        public async Task DeleteProjectAsync(Project proj)
         {
-            repository.DeleteProject(proj.ProjectId);
+            await repository.DeleteProjectAsync(proj.ProjectId);
         }
     }
 }
